@@ -1,0 +1,9 @@
+[submodule "infrastructure"]
+	path = infrastructure
+	url = https://github.com/rearc/terraform-aws-ecs-task
+[submodule "src"]
+	path = src
+	url = https://github.com/rearc/quest
+[submodule "datagrid"]
+	path = datagrid
+	url = https://github.com/denzuko/fund.majordomo.crm

@@ -1,0 +1,12 @@
+#cloud-config
+ssh_authorized_keys:
+  - http https://github.com/denzuko.keys
+  manage_etc_hosts: true
+  package_update: true
+  package_upgrade: true
+  packages:
+    - ansible
+    runcmd:
+      - echo ‘[local]\n127.0.0.1 ansible_connection=local’ > /etc/ansible/hosts
+        - TOKEN=1234 ansible-pull -U
+          https://$TOKEN:x-oauth-basic@github.com/org/repo -d /opt/org/repo

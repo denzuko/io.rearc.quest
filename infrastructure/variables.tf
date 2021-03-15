@@ -70,7 +70,8 @@ variable "container_env" {
   type        = list(map(any))
   description = "Container related environment varables"
   default     = [{
-	"SECRET_WORD": "{flag:QmVoaW5kIGV2ZXJ5IHN1Y2Nlc3NmdWwgQ29kZXIgdGhlcmUgYW4gZXZlbiBtb3JlIHN1Y2Nlc3NmdWwgRGUtY29kZXIgdG8gdW5kZXJzdGFuZCB0aGF0IGNvZGUu}"
+	"name": "SECRET_WORD",
+	"value": "{flag:QmVoaW5kIGV2ZXJ5IHN1Y2Nlc3NmdWwgQ29kZXIgdGhlcmUgYW4gZXZlbiBtb3JlIHN1Y2Nlc3NmdWwgRGUtY29kZXIgdG8gdW5kZXJzdGFuZCB0aGF0IGNvZGUu}"
   }]
 }
 

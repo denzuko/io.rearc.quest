@@ -16,7 +16,7 @@ resource "aws_ecs_task_definition" "task_definition" {
     "memoryReservation": 512,
     "name": "${local.stack}_${var.name}",
     "image": local.image,
-    "environment": concat([{ "PORT": var.container_port }], var.container_env),
+    "environment": concat([{ "name": "PORT", "value": var.container_port }], var.container_env),
     "portMappings": [{
 	"containerPort": var.container_port
     }]

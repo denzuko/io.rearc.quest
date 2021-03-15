@@ -15,7 +15,7 @@ jobs:
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -65,4 +65,5 @@ jobs:
           TF_VAR__AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret }}
           TF_VAR__AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key }}
           TF_VAR__AWS_DEFAULT_REGION: ${{ secrets.aws_default_region }}
-	  TF_VAR__image_name: docker.pkg.github.com/denzuko/clients/rearc.io:latest
+          TF_VAR__image_name: |
+                  docker.pkg.github.com/denzuko/clients/rearc.io:latest

@@ -67,8 +67,7 @@ resource "aws_lb_listener" "alb_listener" {
 
   lifecycle {
     ignore_changes = [
-	default_action,
-	tags,
+	default_action
     ]
   }
 }

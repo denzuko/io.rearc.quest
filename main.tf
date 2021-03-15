@@ -1,19 +1,19 @@
-var "AWS_ACCOUNT_ID" {
+variable "AWS_ACCOUNT_ID" {
 	type   = string
 }
 
-var "AWS_DEFAULT_REGION" {
+variable "AWS_DEFAULT_REGION" {
 	default = "us-east-1"
 	type    = string
 }
 
-var "instant_name" {
+variable "instant_name" {
 	default = "express_api"
 	type    = string
 }
 
 ## Our image name built by cicd
-var "image_name" {
+variable  "image_name" {
 	default = "bitnami/express"
 	type    = string
 }

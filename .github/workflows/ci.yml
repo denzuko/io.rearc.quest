@@ -69,3 +69,15 @@ jobs:
           TF_VAR__AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key }}
           TF_VAR__AWS_DEFAULT_REGION: ${{ secrets.aws_default_region }}
           TF_VAR__image_name: ghcr.io/denzuko/clients/rearc.io:latest
+
+  newman:
+    name: 'Validate deployment'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: matt-ball/newman-action@master
+        with:
+          apiKey: ${{ secrets.postmanApiKey }}
+          collection: 484495-56c2adc0-0c58-4f36-9c9d-cc0bcc734e10
+          environment: 484495-51b5f716-8dba-4adb-931a-2eafc13a17f9
+...

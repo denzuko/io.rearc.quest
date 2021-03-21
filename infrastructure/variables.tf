@@ -6,16 +6,19 @@ variable "aws_account_id" {
 variable "region" {
   type        = string
   description = "AWS Region, e.g. us-east-1"
+  default     = null
 }
 
 variable "name" {
   type        = string
   description = "Name of the task to define for ECS"
+  default     = null
 }
 
-variable "image" {
+variable "container_image" {
   type        = string
   description = "Name of image to run in ECS task"
+  default     = null
 }
 
 variable "environment" {
@@ -66,13 +69,39 @@ variable "security_groups" {
   default     = []
 }
 
+variable "container_name" {
+  type        = string
+  description = "The name of the container. Allowed: /[\\w-]{1,255}/"
+  default     = null
+}
+
+variable "container_essential" {
+  default     = "true"
+  type        = string
+}
+
+variable "container_reservation" {
+  default     = "512"
+  type        = string
+}
+
+variable "container_memory" {
+  default     = "1024"
+  type        = string
+}
+
+variable "container_cpu" {
+  default     = "512"
+  type        = string
+}
+
 variable "container_env" {
-  type        = list(map(any))
-  description = "Container related environment varables"
-  default     = [{
-	"name": "SECRET_WORD",
-	"value": "{flag:QmVoaW5kIGV2ZXJ5IHN1Y2Nlc3NmdWwgQ29kZXIgdGhlcmUgYW4gZXZlbiBtb3JlIHN1Y2Nlc3NmdWwgRGUtY29kZXIgdG8gdW5kZXJzdGFuZCB0aGF0IGNvZGUu}"
-  }]
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  description = "The Container related environment variables. This is a list of maps. map_environment overrides environment"
+  default     = []
 }
 
 variable "container_port" {
@@ -128,3 +157,31 @@ variable "health_check_path" {
   description = "Path to check target for healthiness"
   default     = "/"
 }
+
+variable "entryPoint" {
+  type        = list(string)
+  description = "The entry point that is passed to the container"
+  default     = null
+}
+
+variable "command" {
+  type        = list(string)
+  description = "The command that is passed to the container"
+  default     = null
+}
+
+variable "working_directory" {
+  type        = string
+  description = "The working directory to run commands inside the container"
+  default     = null
+}
+
+variable "extraHosts" {
+  type = list(object({
+    ipAddress = string
+    hostname  = string
+  }))
+  description = "A list of hostnames and IP address mappings to append to the /etc/hosts file on the container. This is a list of maps"
+  default     = null
+}
+

@@ -12,4 +12,7 @@ app.get('/loadbalanced', (req, res) => exec('bin/004 ' + JSON.stringify(req.head
 app.get('/tls',          (req, res) => exec('bin/005 ' + JSON.stringify(req.headers), (err, stdout, stderr) => cout(res, stdout)))
 app.get('/secret_word',  (req, res) => exec('bin/006 ' + JSON.stringify(req.headers), (err, stdout, stderr) => cout(res, stdout)))
 
-app.listen(port, () => console.log(`Rearc quest listening on port ${port}!`))
+app.listen(port, () => {
+	console.log(`Secret: ${process.env.SECRET_WORD}`);
+	console.log(`Rearc quest listening on port ${port}!`);
+})

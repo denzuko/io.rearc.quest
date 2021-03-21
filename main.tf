@@ -26,9 +26,9 @@ provider "aws" {
 ## https://github.com/rearc/terraform-aws-ecs-task/blob/857d3f8cc36aa92d2b074626b3fc69d2f6b9de3e/main.tf#L11
 
 module "ecs_task" {
-  source         = "./infrastructure"
-  aws_account_id = var.AWS_ACCOUNT_ID
-  region         = var.AWS_DEFAULT_REGION
-  name           = var.instant_name
-  image          = var.image_name
+  source            = "./infrastructure"
+  aws_account_id    = var.AWS_ACCOUNT_ID
+  region            = var.AWS_DEFAULT_REGION
+  container_name    = var.instant_name
+  container_image   = var.image_name
 }

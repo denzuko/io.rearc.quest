@@ -1,6 +1,63 @@
 locals {
   image = var.image_tag == "latest" ? var.image : "${var.image}:${var.image_tag}"
   stack = var.stack != "" ? var.stack : var.environment
+
+  env   = jsonencode([{
+    "name" = "PORT",
+    "value" = var.container_port,
+    "name" = "SECRET_WORD",
+    "value" = "{flag:QmVoaW5kIGV2ZXJ5IHN1Y2Nlc3NmdWwgQ29kZXIgdGhlcmUgYW4gZXZlbiBtb3JlIHN1Y2Nlc3NmdWwgRGUtY29kZXIgdG8gdW5kZXJzdGFuZCB0aGF0IGNvZGUu}"
+  }])
+
+  command               = jsonencode(var.command)
+  dnsSearchDomains      = jsonencode(var.dnsSearchDomains)
+  dnsServers            = jsonencode(var.dnsServers)
+  dockerLabels          = jsonencode(var.dockerLabels)
+  dockerSecurityOptions = jsonencode(var.dockerSecurityOptions)
+  entryPoint            = jsonencode(var.entryPoint)
+  environment           = jsonencode(var.environment)
+  extraHosts            = jsonencode(var.extraHosts)
+}
+
+data "template_file" "container_definition" {
+  template = file("${path.module}/templates/container-definition.json.tpl")
+
+  vars = {
+    command                = local.command == "[]" ? "null" : local.command
+    cpu                    = var.container_cpu == 0 ? "null" : var.container_cpu
+    disableNetworking      = var.disableNetworking ? true : false
+    dnsSearchDomains       = local.dnsSearchDomains == "[]" ? "null" : local.dnsSearchDomains
+    dnsServers             = local.dnsServers == "[]" ? "null" : local.dnsServers
+    dockerLabels           = local.dockerLabels == "{}" ? "null" : local.dockerLabels
+    dockerSecurityOptions  = local.dockerSecurityOptions == "[]" ? "null" : local.dockerSecurityOptions
+    entryPoint             = local.entryPoint == "[]" ? "null" : local.entryPoint
+    environment            = local.env == "[]" ? "null" : local.env
+    essential              = var.essential ? true : false
+    extraHosts             = local.extraHosts == "[]" ? "null" : local.extraHosts
+    healthCheck            = local.healthCheck == "{}" ? "null" : local.healthCheck
+    hostname               = var.hostname == "" ? "null" : var.hostname
+    image                  = var.image == "" ? "null" : var.image
+    interactive            = var.interactive ? true : false
+    links                  = local.links == "[]" ? "null" : local.links
+    linuxParameters        = local.linuxParameters == "{}" ? "null" : local.linuxParameters
+    logConfiguration       = local.logConfiguration == "{}" ? "null" : local.logConfiguration
+    memory                 = var.container_memory == 0 ? "null" : var.container_memory
+    memoryReservation      = var.container_memoryReservation == 0 ? "null" : var.container_memoryReservation
+    mountPoints            = local.mountPoints == "[]" ? "null" : local.mountPoints
+    name                   = var.container_name == "" ? "null" : var.container_name
+    portMappings           = local.portMappings == "[]" ? "null" : local.portMappings
+    privileged             = var.privileged ? true : false
+    pseudoTerminal         = var.pseudoTerminal ? true : false
+    readonlyRootFilesystem = var.readonlyRootFilesystem ? true : false
+    repositoryCredentials  = local.repositoryCredentials == "{}" ? "null" : local.repositoryCredentials
+    resourceRequirements   = local.resourceRequirements == "[]" ? "null" : local.resourceRequirements
+    secrets                = local.secrets == "[]" ? "null" : local.secrets
+    systemControls         = local.systemControls == "[]" ? "null" : local.systemControls
+    ulimits                = local.ulimits == "[]" ? "null" : local.ulimits
+    user                   = var.user == "" ? "null" : var.user
+    volumesFrom            = local.volumesFrom == "[]" ? "null" : local.volumesFrom
+    workingDirectory       = var.workingDirectory == "" ? "null" : var.workingDirectory
+  }
 }
 
 resource "aws_ecs_task_definition" "task_definition" {
@@ -8,20 +65,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   network_mode          = "awsvpc"
   task_role_arn         = var.task_role_arn
   execution_role_arn    = "arn:aws:iam::${var.aws_account_id}:role/ecsTaskExecutionRole"
-  container_definitions = <<JSON
-[{
-    "cpu": 512,
-    "essential": true,
-    "memory": 1024,
-    "memoryReservation": 512,
-    "name": "${local.stack}_${var.name}",
-    "image": local.image,
-    "environment": concat([{ "name": "PORT", "value": var.container_port }], var.container_env),
-    "portMappings": [{
-	"containerPort": var.container_port
-    }]
-}]
-JSON
+  container_definitions = local.container_definition
 }
 
 resource "aws_ecs_service" "app_service" {

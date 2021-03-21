@@ -1,14 +1,22 @@
 {
   "name": "quest",
   "version": "1.0.0",
-  "description": "",
+  "description": "Quest exam code",
   "main": "src/000.js",
   "scripts": {
     "start": "node src/000.js",
+    "lint": "npx eslint src/000.js",
+    "test": "npx jest --maxWorkers=1 --forceExit",
     "healthcheck": "wget  --no-verbose --tries=1 --spider http://localhost:${PORT}"
   },
   "dependencies": {
     "express": "~4.16.3"
+  },
+  "devDependencies": {
+    "eslint": "*",
+    "npx": "*",
+    "jest": "*",
+    "supertest": "*"
   },
   "keywords": [],
   "author": "Rearc",

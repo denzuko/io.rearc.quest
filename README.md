@@ -7,4 +7,5 @@ Vulnerabilities](https://snyk.io/test/github/denzuko/io.rearc.quest/badge.svg)](
 
 ## Development time
   - [dashboard](https://wakatime.com/@2d1e3184-3b5d-440f-a803-9d8d3bb8b72d/projects/awqvajppmo?start=2021-03-07&end=2021-03-20)
-<img src="https://github.com/denzuko/io.rearc/blob/master/images/stat.svg" alt="WakaTime Activity"/>
+
+<img src="https://github.com/denzuko/io.rearc.quest/blob/master/images/stat.svg" alt="WakaTime Activity"/>

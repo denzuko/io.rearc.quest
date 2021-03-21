@@ -21,6 +21,24 @@ variable "container_image" {
   default     = null
 }
 
+variable "dnsSearchDomains" {
+  default     = []
+  description = "A list of DNS search domains that are presented to the container"
+  type        = list(string)
+}
+
+variable "dnsServers" {
+  default     = []
+  description = "A list of DNS servers that are presented to the container"
+  type        = list(string)
+}
+
+variable "dockerLabels" {
+  default     = {}
+  description = "A key/value map of labels to add to the container"
+  type        = map(string)
+}
+
 variable "environment" {
   type        = string
   description = "Infrastructure environment, e.g. staging or production"
@@ -185,3 +203,62 @@ variable "extraHosts" {
   default     = null
 }
 
+variable "readonlyRootFilesystem" {
+  default     = false
+  description = "When this parameter is true, the container is given read-only access to its root file system"
+}
+
+variable "privileged" {
+  default     = false
+  description = "When this parameter is true, the container is given elevated privileges on the host container instance (similar to the root user)"
+}
+
+variable "pseudoTerminal" {
+  default     = false
+  description = "When this parameter is true, a TTY is allocated"
+}
+
+
+variable "ulimits" {
+  default     = []
+  description = "A list of ulimits to set in the container"
+  type        = list(string)
+}
+
+variable "user" {
+  default     = ""
+  description = "The user name to use inside the container"
+}
+
+variable "volumes" {
+  default     = []
+  description = "A list of volume definitions in JSON format that containers in your task may use"
+  type        = list(string)
+}
+
+variable "volumesFrom" {
+  default     = []
+  description = "Data volumes to mount from another container"
+  type        = list(string)
+}
+
+variable "workingDirectory" {
+  default     = ""
+  description = "The working directory in which to run commands inside the container"
+}
+
+variable "log_driver" {
+  default     = "awslogs"
+  description = "The log driver to use for the container. Fargate supported log drivers are awslogs and splunk."
+}
+
+variable "log_options" {
+  default     = {}
+  description = "Logging options for the log_driver"
+  type        = map(string)
+}
+
+variable "image" {
+  default     = ""
+  description = "The image used to start a container"
+}

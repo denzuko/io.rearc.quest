@@ -29,8 +29,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-        with:
-          driver: docker
 
       - name: Push to GitHub Packages
         uses: docker/build-push-action@v2

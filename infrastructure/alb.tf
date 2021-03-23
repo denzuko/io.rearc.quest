@@ -127,6 +127,7 @@ resource "aws_security_group_rule" "alb_sg_rule" {
   to_port                  = 0
   protocol                 = "-1"
   source_security_group_id = length(aws_security_group.alb_sg) > 0 ? aws_security_group.alb_sg[0].id : ""
+  description              = "{local.stack}_{var.container_name}"
 }
 
 resource "aws_security_group_rule" "app_sg_rule" {
@@ -138,4 +139,6 @@ resource "aws_security_group_rule" "app_sg_rule" {
   to_port                  = 0
   protocol                 = "-1"
   source_security_group_id = aws_security_group.app_sg[0].id
+  description              = "{local.stack}_{var.container_name}"
+
 }

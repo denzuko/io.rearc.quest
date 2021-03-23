@@ -60,6 +60,9 @@ def clean(ctx):
     for x in [
         ".terraform",
         ".terraform.lock.hcl",
+        'infrastructure/.terraform.lock.hcl',
+        'plan.tfplan',
+        'terraform.tfstate',
         "infrastructure/.terraform",
         "src/node_modules"
     ]:

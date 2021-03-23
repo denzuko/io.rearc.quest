@@ -34,6 +34,7 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install invoke pyinvokedepends invocations
                   test -f requirements.txt && pip install -r requirements.txt
+                  exit 0
 
             - name: Validate Dockerfile
               uses: brpaz/hadolint-action@v1.3.1

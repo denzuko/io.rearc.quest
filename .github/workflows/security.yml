@@ -51,6 +51,7 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install invoke pyinvokedepends invocations
                   test -f requirements.txt && pip install -r requirements.txt
+                  exit 0
 
             - name: Terraform security scan
               uses: triat/terraform-security-scan@v2.2.1

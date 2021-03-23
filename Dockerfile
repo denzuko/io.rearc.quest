@@ -2,7 +2,7 @@
 FROM node:10-alpine
 
 ## labeling and Responcable Party
-MAINTAINER "Dwight Spencer (@denzuko)"
+LABEL vendor=Rearc
 LABEL org.opencontainers.image.title "rearc.io-quest"
 LABEL org.opencontainers.image.description "example deployment for rearc.io quest"
 LABEL net.dapla.cmdbapi.orgunit "Platform Dev"
@@ -24,8 +24,7 @@ ENV TEST=${TEST}
 EXPOSE ${PORT}
 
 # Install requirements
-RUN apk add --update --no-cache python \
-            --virtual build-dep build-base gcc wget git ca-certificates
+RUN apk add --update --no-cache python build-base gcc wget git ca-certificates
 
 # Remove interactive login shell for everybody but user.
 RUN adduser -D -s /bin/sh -u 1100 runner && sed -i -r 's/^runner:!:/runner:x:/' /etc/shadow
@@ -37,7 +36,9 @@ COPY --chown=runner:runner src/package.json /src
 COPY --chown=runner:runner src/bin /src
 COPY --chown=runner:runner src/src /src
 
-RUN which npx | grep npx 2>/dev/null || npm install -g npx
+SHELL bash
+
+RUN command -v npx 2>/dev/null || npm install -g npx@10.2.2
 RUN npm install
 #RUN test $LINT == "yes" && npm run lint
 #RUN test $TEST == "yes" && npm run test
@@ -60,7 +61,7 @@ USER runner
 HEALTHCHECK --interval=10m --timeout=5s CMD wget -nv -t1 --spider 'http://localhost:${PORT}'
 
 ## npm is good and this is our pid 1
-ENTRYPOINT npm
+ENTRYPOINT ["npm"]
 
 ## can override for sub tasks but we'll just start the server with each instance
-CMD start
+CMD ["start"]

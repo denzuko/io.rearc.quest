@@ -13,7 +13,7 @@ jobs:
 
             - uses: JasonEtco/create-an-issue@v2
               with:
-                  filename: .github/ISSUE_TEMPLATE/bug_report.md
+                  filename: .github/ISSUE_TEMPLATE/cicd_error.md
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -34,13 +34,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v2
-	    with:
+        with:
           python-version: 3.8
-	  - name: Install dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install invoke pyinvokedepends invocations
-		  test -f requirements.txt && pip install -r requirements.txt
+          test -f requirements.txt && pip install -r requirements.txt
 
       - name: Terraform security scan
         uses: triat/terraform-security-scan@v2.0.2
@@ -50,14 +50,14 @@ jobs:
       - name: terraform plan
         id: plan
         run: |
-		  invoke terraform.plan
+          invoke terraform.plan
           invoke terraform.show
 
       - name: Run driftctl
         uses: cloudskiff/driftctl-action@v1
         with:
           version: latest
-      
+
       - name: terraform-compliance
         uses: terraform-compliance/github_action@main
         with:

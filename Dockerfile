@@ -43,7 +43,7 @@ RUN command -v npx 2>/dev/null || npm install -g npx@10.2.2
 RUN npm install
 
 RUN sed -i -r '/^runner:/! s#^(.*):[^:]*$#\1:/sbin/nologin#' /etc/passwd
-RUN printf "\n\nApp container image built on $(date)." > /etc/motd
+RUN printf "\n\nApp container image built on %s." "$(date)" > /etc/motd
 RUN rm -fr /var/spool/cron /etc/crontabs /etc/periodic
 RUN sed -i -r '/^(runner|root|sshd)/!d' /etc/group
 RUN sed -i -r '/^(runner|root|sshd)/!d' /etc/passwd

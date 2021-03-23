@@ -2,10 +2,10 @@ locals {
   image = var.image_tag == "latest" ? var.image : "${var.image}:${var.image_tag}"
   stack = var.stack != "" ? var.stack : var.environment
 
-  env   = jsonencode([{
-    "name" = "PORT",
+  env = jsonencode([{
+    "name"  = "PORT",
     "value" = var.container_port,
-    "name" = "SECRET_WORD",
+    "name"  = "SECRET_WORD",
     "value" = "{flag:QmVoaW5kIGV2ZXJ5IHN1Y2Nlc3NmdWwgQ29kZXIgdGhlcmUgYW4gZXZlbiBtb3JlIHN1Y2Nlc3NmdWwgRGUtY29kZXIgdG8gdW5kZXJzdGFuZCB0aGF0IGNvZGUu}"
   }])
 
@@ -17,6 +17,65 @@ locals {
   entryPoint            = jsonencode(var.entryPoint)
   environment           = jsonencode(var.environment)
   extraHosts            = jsonencode(var.extraHosts)
+  ulimits               = replace(jsonencode(var.ulimits), local.classes["digit"], "$1")
+  volumesFrom = replace(
+    replace(jsonencode(var.volumesFrom), "/\"1\"/", "true"),
+    "/\"0\"/",
+    "false",
+  )
+
+  # re2 ASCII character classes
+  # https://github.com/google/re2/wiki/Syntax
+  classes = {
+    digit = "/\"(-[[:digit:]]|[[:digit:]]+)\"/"
+  }
+
+  links = jsonencode(var.links)
+  healthCheck = replace(jsonencode(var.healthCheck), local.classes["digit"],
+  "$1")
+
+  linuxParameters = replace(
+    replace(
+      replace(jsonencode(var.linuxParameters), "/\"1\"/", "true"),
+      "/\"0\"/",
+      "false",
+    ),
+    local.classes["digit"],
+    "$1",
+  )
+
+  logConfiguration_default = {
+    logDriver = var.log_driver
+    options   = var.log_options
+  }
+
+  logConfiguration = replace(
+    replace(
+      jsonencode(local.logConfiguration_default),
+      "/\"1\"/",
+      "true",
+    ),
+    "/\"0\"/",
+    "false",
+  )
+
+  mountPoints = replace(
+    replace(jsonencode(var.mountPoints), "/\"1\"/", "true"),
+    "/\"0\"/",
+    "false",
+  )
+
+  portMappings = replace(jsonencode(var.portMappings), "/\"([0-9]+\\.?[0-9]*)\"/", "$1")
+
+
+  repositoryCredentials = jsonencode(var.repositoryCredentials)
+  resourceRequirements  = jsonencode(var.resourceRequirements)
+  systemControls        = jsonencode(var.systemControls)
+  secrets               = jsonencode(var.secrets)
+
+  container_definition  = format("[%s]", data.template_file.container_definition.rendered)
+  container_definitions = replace(local.container_definition, "/\"(null)\"/", "$1")
+
 }
 
 data "template_file" "container_definition" {
@@ -86,7 +145,7 @@ resource "aws_ecs_service" "app_service" {
   }
 
   network_configuration {
-    subnets = var.private_subnets
+    subnets         = var.private_subnets
     security_groups = length(var.security_groups) == 0 ? [aws_security_group.app_sg[0].id] : var.security_groups
   }
 
@@ -129,15 +188,15 @@ resource "aws_appautoscaling_policy" "ecs_policy_scale_up" {
   service_namespace  = aws_appautoscaling_target.ecs_target[0].service_namespace
 
   step_scaling_policy_configuration {
-      adjustment_type         = "ChangeInCapacity"
-      cooldown                = 120
-      metric_aggregation_type = "Average"
+    adjustment_type         = "ChangeInCapacity"
+    cooldown                = 120
+    metric_aggregation_type = "Average"
 
-      step_adjustment {
-        metric_interval_lower_bound = 0
-        scaling_adjustment          = 1
-      }
+    step_adjustment {
+      metric_interval_lower_bound = 0
+      scaling_adjustment          = 1
     }
+  }
 
 }
 
@@ -151,15 +210,15 @@ resource "aws_appautoscaling_policy" "ecs_policy_scale_down" {
   service_namespace  = aws_appautoscaling_target.ecs_target[0].service_namespace
 
   step_scaling_policy_configuration {
-      adjustment_type         = "ChangeInCapacity"
-      cooldown                = 120
-      metric_aggregation_type = "Average"
+    adjustment_type         = "ChangeInCapacity"
+    cooldown                = 120
+    metric_aggregation_type = "Average"
 
-      step_adjustment {
-        metric_interval_lower_bound = 0
-        scaling_adjustment          = -1
-      }
+    step_adjustment {
+      metric_interval_lower_bound = 0
+      scaling_adjustment          = -1
     }
+  }
 
 }
 
@@ -185,7 +244,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cluster_autoscaling_up" {
 
 resource "aws_cloudwatch_metric_alarm" "ecs_cluster_autoscaling_down" {
   count = length(var.private_subnets) == 0 ? 0 : 1
-  
+
   alarm_name          = "${local.stack}_${var.name}_autoscale_down"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = "2"

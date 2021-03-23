@@ -33,6 +33,11 @@ def plan(ctx, destroy=False):
         ]))
 
 @task
+def show(ctx):
+    #env = load_env()
+    ctx.run("terraform show -json plan.tfplan > plan.out.json")
+
+@task
 def fmt(ctx):
 #    env = load_env()
     ctx.run("terraform fmt -diff -recursive")
@@ -75,5 +80,4 @@ def help(ctx):
 ns = Collection(clean, deploy, help)
 ns.add_collection(Collection('docker', build_image))
 ns.add_collection(Collection('terraform', 
-    init, plan, fmt, 
-    validate, apply, destroy))
+    init, plan, fmt, show, validate, apply, destroy))

@@ -94,23 +94,25 @@ variable "container_name" {
 }
 
 variable "container_essential" {
-  default     = "true"
-  type        = string
+  default = "true"
+  type    = string
 }
 
-variable "container_reservation" {
+variable "container_memoryReservation" {
   default     = "512"
   type        = string
+  description = "The soft limit (in MiB) of memory to reserve for the container"
 }
 
 variable "container_memory" {
   default     = "1024"
   type        = string
+  description = "The hard limit (in MiB) of memory to present to the container"
 }
 
 variable "container_cpu" {
-  default     = "512"
-  type        = string
+  default = "512"
+  type    = string
 }
 
 variable "container_env" {
@@ -218,13 +220,6 @@ variable "pseudoTerminal" {
   description = "When this parameter is true, a TTY is allocated"
 }
 
-
-variable "ulimits" {
-  default     = []
-  description = "A list of ulimits to set in the container"
-  type        = list(string)
-}
-
 variable "user" {
   default     = ""
   description = "The user name to use inside the container"
@@ -312,16 +307,6 @@ variable "logConfiguration" {
   default     = {}
   description = "The log configuration specification for the container"
   type        = map(string)
-}
-
-variable "memory" {
-  default     = 0
-  description = "The hard limit (in MiB) of memory to present to the container"
-}
-
-variable "memoryReservation" {
-  default     = 0
-  description = "The soft limit (in MiB) of memory to reserve for the container"
 }
 
 variable "mountPoints" {

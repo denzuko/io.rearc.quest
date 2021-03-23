@@ -268,3 +268,110 @@ variable "dockerSecurityOptions" {
   description = "A list of strings to provide custom labels for SELinux and AppArmor multi-level security systems"
   type        = list(string)
 }
+
+variable "disableNetworking" {
+  default     = false
+  description = "When this parameter is true, networking is disabled within the container"
+}
+
+variable "essential" {
+  default     = true
+  description = "If the essential parameter of a container is marked as true, and that container fails or stops for any reason, all other containers that are part of the task are stopped"
+}
+
+variable "healthCheck" {
+  default     = {}
+  description = "The health check command and associated configuration parameters for the container"
+  type        = map(string)
+}
+
+variable "hostname" {
+  default     = ""
+  description = "The hostname to use for your container"
+}
+
+
+variable "interactive" {
+  default     = false
+  description = "When this parameter is true, this allows you to deploy containerized applications that require stdin or a tty to be allocated"
+}
+
+variable "links" {
+  default     = []
+  description = "The link parameter allows containers to communicate with each other without the need for port mappings"
+  type        = list(string)
+}
+
+variable "linuxParameters" {
+  default     = {}
+  description = "Linux-specific modifications that are applied to the container, such as Linux KernelCapabilities"
+  type        = map(string)
+}
+
+variable "logConfiguration" {
+  default     = {}
+  description = "The log configuration specification for the container"
+  type        = map(string)
+}
+
+variable "memory" {
+  default     = 0
+  description = "The hard limit (in MiB) of memory to present to the container"
+}
+
+variable "memoryReservation" {
+  default     = 0
+  description = "The soft limit (in MiB) of memory to reserve for the container"
+}
+
+variable "mountPoints" {
+  default     = []
+  description = "The mount points for data volumes in your container"
+  type        = list(string)
+}
+
+variable "portMappings" {
+  default     = []
+  description = "The list of port mappings for the container"
+  type = list(object({
+    containerPort = number
+    protocol      = string
+  }))
+}
+
+variable "repositoryCredentials" {
+  default     = {}
+  description = "The private repository authentication credentials to use"
+  type        = map(string)
+}
+
+variable "resourceRequirements" {
+  default     = []
+  description = "The type and amount of a resource to assign to a container"
+  type        = list(string)
+}
+
+variable "secrets" {
+  default     = []
+  description = "The secrets to pass to the container"
+  type        = list(map(string))
+}
+
+variable "systemControls" {
+  default     = []
+  description = "A list of namespaced kernel parameters to set in the container"
+  type        = list(string)
+}
+
+
+variable "ulimits" {
+  default     = []
+  description = "A list of ulimits to set in the container"
+  type        = list(string)
+}
+
+variable "volumesFrom" {
+  default     = []
+  description = "Data volumes to mount from another container"
+  type        = list(string)
+}

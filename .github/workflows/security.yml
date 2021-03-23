@@ -1,0 +1,66 @@
+---
+name: Security Policy Validations
+
+on:
+  pull_request:
+  push:
+    tags:
+      - '\d+.\d+.\d+'
+
+jobs:
+  docker:
+    name: Build and Push Docker image to GitHub Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sysdig CIS Dockerfile Benchmark
+        uses: sysdiglabs/benchmark-dockerfile@v1.0.0
+
+  Policy:
+    name: Infrastructure policy checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: hashicorp/setup-terraform@v1
+      - uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v2
+	    with:
+          python-version: 3.8
+	  - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install invoke pyinvokedepends invocations
+		  test -f requirements.txt && pip install -r requirements.txt
+
+      - name: Terraform security scan
+        uses: triat/terraform-security-scan@v2.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: terraform plan
+        id: plan
+        run: |
+		  invoke terraform.plan
+          invoke terraform.show
+
+      - name: Run driftctl
+        uses: cloudskiff/driftctl-action@v1
+        with:
+          version: latest
+      
+      - name: terraform-compliance
+        uses: terraform-compliance/github_action@main
+        with:
+          plan: plan.out.json
+          features: ssh://git@github.com/Daplanet/Compliance-Tests.git
+...

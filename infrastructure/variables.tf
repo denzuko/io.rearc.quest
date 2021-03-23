@@ -363,15 +363,8 @@ variable "systemControls" {
   type        = list(string)
 }
 
-
 variable "ulimits" {
   default     = []
   description = "A list of ulimits to set in the container"
-  type        = list(string)
-}
-
-variable "volumesFrom" {
-  default     = []
-  description = "Data volumes to mount from another container"
   type        = list(string)
 }

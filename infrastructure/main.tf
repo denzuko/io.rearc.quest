@@ -47,7 +47,7 @@ locals {
   logConfiguration_default = {
     logDriver = var.log_driver
     options   = {
-        awslogs_region: var.AWS_DEFAULT_REGION,
+        awslogs_region: var.region,
         awslogs_group: aws_cloudwatch_log_group.rearc_quest.name
     }
   }
@@ -69,7 +69,6 @@ locals {
   )
 
   portMappings = replace(jsonencode(var.portMappings), "/\"([0-9]+\\.?[0-9]*)\"/", "$1")
-
 
   repositoryCredentials = jsonencode(var.repositoryCredentials)
   resourceRequirements  = jsonencode(var.resourceRequirements)

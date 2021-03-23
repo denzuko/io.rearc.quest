@@ -2,139 +2,135 @@
 name: Build docker image and push AWS Deployment ECS
 
 on:
-  push:
-    tags:
-      - '\d+.\d+.\d+'
+    push:
+        tags:
+            - '\d+.\d+.\d+'
 
 jobs:
 
-  docker:
-    name: Build and Push Docker image to GitHub Packages
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
+    docker:
+        name: Build and Push Docker image to GitHub Packages
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                shell: bash
+        steps:
+            - name: Check out the repo
+              uses: actions/checkout@v2
 
-      - uses: JasonEtco/create-an-issue@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - uses: JasonEtco/create-an-issue@v2
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
+            - uses: actions/setup-python@v2
+              with:
+                  python-version: 3.8
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install invoke pyinvokedepends invocations
-          test -f requirements.txt && pip install -r requirements.txt
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install invoke pyinvokedepends invocations
+                  test -f requirements.txt && pip install -r requirements.txt
 
-      - name: Validate Dockerfile
-        uses: brpaz/hadolint-action@v1.2.1
-        with:
-          dockerfile: Dockerfile
+            - name: Validate Dockerfile
+              uses: brpaz/hadolint-action@v1.2.1
+              with:
+                  dockerfile: Dockerfile
 
-      - name: Sysdig CIS Dockerfile Benchmark
-        uses: sysdiglabs/benchmark-dockerfile@v1.0.0
+            - name: Sysdig CIS Dockerfile Benchmark
+              uses: sysdiglabs/benchmark-dockerfile@v1.0.0
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v1
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.repository_owner }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v1
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v1
 
-      - name: Push to GitHub Packages
-        uses: docker/build-push-action@v2
-        with:
-          context: ./
-          file: ./Dockerfile
-          tags: ghcr.io/denzuko/clients/rearc.io
-          platforms: linux/amd64,linux/arm64,linux/arm
+            - name: Push to GitHub Packages
+              uses: docker/build-push-action@v2
+              with:
+                  context: ./
+                  file: ./Dockerfile
+                  tags: ghcr.io/denzuko/clients/rearc.io
+                  platforms: linux/amd64,linux/arm64,linux/arm
 
-  terraform:
-    name: 'Build Infrastructure'
-    needs: [docker]
-    runs-on: ubuntu-latest
-    # Use the Bash shell regardless whether the GitHub Actions runner
-    # is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
-    # Checkout the repository to the GitHub Actions runner
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+    terraform:
+        name: 'Build Infrastructure'
+        needs: [docker]
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                shell: bash
 
-      - uses: JasonEtco/create-an-issue@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
 
-      - uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
+            - uses: JasonEtco/create-an-issue@v2
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install invoke pyinvokedepends invocations
-          test -f requirements.txt && pip install -r requirements.txt
+            - uses: actions/setup-python@v2
+              with:
+                  python-version: 3.8
 
-      # Install the latest version of Terraform CLI and configure
-      # the Terraform CLI configuration file with a Terraform Cloud
-      # user API token
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 0.14.8
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install invoke pyinvokedepends invocations
+                  test -f requirements.txt && pip install -r requirements.txt
 
-      - name: Terraform Init
-        run: terraform init
+            - name: Setup Terraform
+              uses: hashicorp/setup-terraform@v1
+              with:
+                  terraform_version: 0.14.8
+                  cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-      - name: Terraform lint checker
-        uses: terraform-linters/setup-tflint@v1
-        with:
-          tflint_version: latest
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+            - name: Terraform Init
+              run: terraform init
 
-      - name: Terraform security scan
-        uses: triat/terraform-security-scan@v2.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Terraform lint checker
+              uses: terraform-linters/setup-tflint@v1
+              with:
+                  tflint_version: latest
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Checks that all Terraform configuration files adhere
-      # to a canonical format
-      - name: Terraform Format
-        run: terraform fmt -check
+            - name: Terraform security scan
+              uses: triat/terraform-security-scan@v2.0.2
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Generates an execution plan for Terraform
-      - name: Terraform Plan
-        run: invoke terraform.plan
-        env:
-          TF_VAR__AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret }}
-          TF_VAR__AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key }}
-          TF_VAR__AWS_DEFAULT_REGION: ${{ secrets.aws_default_region }}
-          TF_VAR__IMAGE_NAME: ghcr.io/denzuko/clients/rearc.io:latest
+            - name: Terraform Format
+              run: terraform fmt -check
 
-  newman:
-    name: 'Validate deployment'
-    runs-on: ubuntu-latest
-    needs: [terraform]
-    steps:
-      - uses: actions/checkout@master
-      - uses: JasonEtco/create-an-issue@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: matt-ball/newman-action@master
-        with:
-          apiKey: ${{ secrets.postmanApiKey }}
-          collection: 484495-56c2adc0-0c58-4f36-9c9d-cc0bcc734e10
-          environment: 484495-51b5f716-8dba-4adb-931a-2eafc13a17f9
+            - name: Terraform Plan
+              run: invoke terraform.plan
+              env:
+                  TF_VAR__AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret }}
+                  TF_VAR__AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key }}
+                  TF_VAR__AWS_DEFAULT_REGION: ${{ secrets.aws_default_region }}
+                  TF_VAR__IMAGE_NAME: ghcr.io/denzuko/clients/rearc.io:latest
+
+    newman:
+        name: 'Validate deployment'
+        runs-on: ubuntu-latest
+        needs: [terraform]
+        steps:
+            - uses: actions/checkout@master
+            - uses: JasonEtco/create-an-issue@v2
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - uses: matt-ball/newman-action@master
+              with:
+                  apiKey: ${{ secrets.postmanApiKey }}
+                  collection: 484495-56c2adc0-0c58-4f36-9c9d-cc0bcc734e10
+                  environment: 484495-51b5f716-8dba-4adb-931a-2eafc13a17f9
 ...

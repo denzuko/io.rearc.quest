@@ -47,7 +47,7 @@ locals {
   logConfiguration_default = {
     logDriver = var.log_driver
     options   = {
-        awslogs_region: env.AWS_DEFAULT_REGION,
+        awslogs_region: var.AWS_DEFAULT_REGION,
         awslogs_group: aws_cloudwatch_log_group.rearc_quest.name
     }
   }

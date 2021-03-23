@@ -35,7 +35,7 @@ COPY --chown=runner:runner src/package.json /src
 COPY --chown=runner:runner src/bin /src
 COPY --chown=runner:runner src/src /src
 
-SHELL bash
+SHELL ["/bin/bash"]
 
 RUN command -v npx 2>/dev/null || npm install -g npx@10.2.2
 RUN npm install

@@ -2,8 +2,9 @@
 name: Build docker image and push AWS Deployment ECS
 
 on:
-  release:
-    types: [published, created, edited]
+  push:
+    tags: 
+      - '\d+.\d+.\d+'
 
 jobs:
   push_to_registry:

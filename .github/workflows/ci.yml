@@ -18,13 +18,6 @@ jobs:
             - name: Check out the repo
               uses: actions/checkout@v2
 
-            - uses: JasonEtco/create-an-issue@v2
-              if: ${{ failure() }}
-              with:
-                  filename: .github/ISSUE_TEMPLATE/cicd_error.md
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
             - uses: actions/setup-python@v2
               with:
                   python-version: 3.8
@@ -32,9 +25,7 @@ jobs:
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip
-                  pip install invoke pyinvokedepends invocations
-                  test -f requirements.txt && pip install -r requirements.txt
-                  exit 0
+                  pip install -r requirements.txt
 
             - name: Validate Dockerfile
               uses: brpaz/hadolint-action@v1.3.1
@@ -65,6 +56,14 @@ jobs:
                   tags: ghcr.io/denzuko/clients/rearc.io
                   platforms: linux/amd64,linux/arm64,linux/arm
 
+            - uses: JasonEtco/create-an-issue@v2
+              if: ${{ failure() }}
+              with:
+                  filename: .github/ISSUE_TEMPLATE/cicd_error.md
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
     terraform:
         name: 'Build Infrastructure'
         needs: [docker]
@@ -91,8 +90,7 @@ jobs:
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip
-                  pip install invoke pyinvokedepends invocations
-                  test -f requirements.txt && pip install -r requirements.txt
+                  pip install -r requirements.txt
 
             - name: Setup Terraform
               uses: hashicorp/setup-terraform@v1

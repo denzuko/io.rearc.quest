@@ -262,3 +262,9 @@ variable "image" {
   default     = ""
   description = "The image used to start a container"
 }
+
+variable "dockerSecurityOptions" {
+  default     = []
+  description = "A list of strings to provide custom labels for SELinux and AppArmor multi-level security systems"
+  type        = list(string)
+}

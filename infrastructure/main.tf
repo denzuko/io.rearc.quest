@@ -115,8 +115,8 @@ data "template_file" "container_definition" {
     logConfiguration       = var.log_driver == "" ? "null" : local.logConfiguration
     memory                 = var.container_memory == 0 ? "null" : var.container_memory
     memoryReservation      = var.container_memoryReservation == 0 ? "null" : var.container_memoryReservation
-
-
+    mountPoints            = local.mountPoints
+    name                   = var.container_name == "" ? "null" : var.container_name
 
   }
 }

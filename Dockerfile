@@ -26,7 +26,8 @@ RUN apk update && apk add --update --no-cache \
     build-base=0.5-r1 \
     wget=1.20.3-r0 \
     git=2.24.4-r0 \
-    ca-certificates=20191127-r5
+    bash=5.0.11-r1 \
+    ca-certificates=20191127-r2
 
 RUN adduser -D -s /bin/sh -u 1100 runner && sed -i -r 's/^runner:!:/runner:x:/' /etc/shadow
 
@@ -36,7 +37,7 @@ COPY --chown=runner:runner src/package.json /src
 COPY --chown=runner:runner src/bin /src
 COPY --chown=runner:runner src/src /src
 
-SHELL ["/bin/bash"]
+SHELL ["/bin/sh", "-c"]
 
 RUN command -v npx 2>/dev/null || npm install -g npx@10.2.2
 RUN npm install

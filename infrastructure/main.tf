@@ -112,6 +112,8 @@ data "template_file" "container_definition" {
     user                   = var.user == "" ? "null" : var.user
     volumesFrom            = local.volumesFrom == "[]" ? "null" : local.volumesFrom
     workingDirectory       = var.workingDirectory == "" ? "null" : var.workingDirectory
+    logConfiguration       = var.log_driver == "" ? "null" : local.logConfiguration
+
   }
 }
 

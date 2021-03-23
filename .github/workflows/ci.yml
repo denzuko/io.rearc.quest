@@ -80,7 +80,7 @@ jobs:
           TF_VAR__AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret }}
           TF_VAR__AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key }}
           TF_VAR__AWS_DEFAULT_REGION: ${{ secrets.aws_default_region }}
-          TF_VAR__image_name: ghcr.io/denzuko/clients/rearc.io:latest
+          TF_VAR__IMAGE_NAME: ghcr.io/denzuko/clients/rearc.io:latest
 
   newman:
     name: 'Validate deployment'

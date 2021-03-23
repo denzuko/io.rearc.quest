@@ -120,7 +120,7 @@ data "template_file" "container_definition" {
 }
 
 resource "aws_ecs_task_definition" "task_definition" {
-  family                = "${local.stack}_${var.name}"
+  family                = "${local.stack}_${var.container_name}"
   network_mode          = "awsvpc"
   task_role_arn         = var.task_role_arn
   execution_role_arn    = "arn:aws:iam::${var.aws_account_id}:role/ecsTaskExecutionRole"
@@ -130,7 +130,7 @@ resource "aws_ecs_task_definition" "task_definition" {
 resource "aws_ecs_service" "app_service" {
   count = length(var.private_subnets) == 0 ? 0 : 1
 
-  name            = "${local.stack}_${var.name}"
+  name            = "${local.stack}_${var.container_name}"
   cluster         = var.ecs_cluster_name
   task_definition = aws_ecs_task_definition.task_definition.arn
   desired_count   = var.minimum_capacity
@@ -162,7 +162,7 @@ resource "aws_ecs_service" "app_service" {
 
     content {
       target_group_arn = aws_lb_target_group.alb_target_group_blue[0].arn
-      container_name   = "${local.stack}_${var.name}"
+      container_name   = "${local.stack}_${var.container_name}"
       container_port   = var.container_port
     }
   }
@@ -181,7 +181,7 @@ resource "aws_appautoscaling_target" "ecs_target" {
 resource "aws_appautoscaling_policy" "ecs_policy_scale_up" {
   count = length(var.private_subnets) == 0 ? 0 : 1
 
-  name               = "${local.stack}-${var.name}-scale-up"
+  name               = "${local.stack}-${var.container_name}-scale-up"
   policy_type        = "StepScaling"
   resource_id        = aws_appautoscaling_target.ecs_target[0].resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_target[0].scalable_dimension
@@ -203,7 +203,7 @@ resource "aws_appautoscaling_policy" "ecs_policy_scale_up" {
 resource "aws_appautoscaling_policy" "ecs_policy_scale_down" {
   count = length(var.private_subnets) == 0 ? 0 : 1
 
-  name               = "${local.stack}-${var.name}-scale-down"
+  name               = "${local.stack}-${var.container_name}-scale-down"
   policy_type        = "StepScaling"
   resource_id        = aws_appautoscaling_target.ecs_target[0].resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_target[0].scalable_dimension
@@ -225,7 +225,7 @@ resource "aws_appautoscaling_policy" "ecs_policy_scale_down" {
 resource "aws_cloudwatch_metric_alarm" "ecs_cluster_autoscaling_up" {
   count = length(var.private_subnets) == 0 ? 0 : 1
 
-  alarm_name          = "${local.stack}_${var.name}_autoscale_up"
+  alarm_name          = "${local.stack}_${var.container_name}_autoscale_up"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "2"
   metric_name         = "CPUUtilization"
@@ -245,7 +245,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cluster_autoscaling_up" {
 resource "aws_cloudwatch_metric_alarm" "ecs_cluster_autoscaling_down" {
   count = length(var.private_subnets) == 0 ? 0 : 1
 
-  alarm_name          = "${local.stack}_${var.name}_autoscale_down"
+  alarm_name          = "${local.stack}_${var.container_name}_autoscale_down"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = "2"
   metric_name         = "CPUUtilization"

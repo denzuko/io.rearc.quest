@@ -46,7 +46,10 @@ locals {
 
   logConfiguration_default = {
     logDriver = var.log_driver
-    options   = var.log_options
+    options   = {
+        awslogs_region: env.AWS_DEFAULT_REGION,
+        awslogs_group: aws_cloudwatch_log_group.rearc_quest.name
+    }
   }
 
   logConfiguration = replace(
@@ -259,4 +262,14 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cluster_autoscaling_down" {
 
   alarm_description = "This metric monitors ecs cpu utilization"
   alarm_actions     = [aws_appautoscaling_policy.ecs_policy_scale_down[0].arn]
+}
+
+resource "aws_cloudwatch_log_group" "rearc_quest" {
+  name = "rearc_quest_${local.stack}"
+  tags = {
+    environment = local.stack
+    application = "rearc.io-quest"
+    owner       = "dz-01"
+  }
+
 }

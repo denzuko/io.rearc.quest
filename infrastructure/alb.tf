@@ -56,7 +56,7 @@ resource "aws_lb_listener" "alb_listener" {
   load_balancer_arn = aws_lb.alb[0].arn
   port              = var.ingress_port
   protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
 
   default_action {
     target_group_arn = aws_lb_target_group.alb_target_group_blue[0].arn

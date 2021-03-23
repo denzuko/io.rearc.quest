@@ -20,7 +20,8 @@ ARG TEST 'yes'
 ENV TEST=${TEST}
 EXPOSE ${PORT}
 
-RUN apk add --update --no-cache \
+RUN apk update && apk add --update --no-cache \
+    --repository=http://dl-cdn.alpinelinux.org/alpine/v3.11/main \
     python3=3.8.2-r2 \
     build-base=0.5-r1 \
     wget=1.20.3-r0 \

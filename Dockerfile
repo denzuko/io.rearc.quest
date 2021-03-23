@@ -21,10 +21,10 @@ ENV TEST=${TEST}
 EXPOSE ${PORT}
 
 RUN apk add --update --no-cache \
-    python3=3.8.8-r0 \
-    build-base=0.5-r2 \
-    wget=1.21.1-r1 \
-    git=2.31.0-r0 \
+    python3=3.8.2-r2 \
+    build-base=0.5-r1 \
+    wget=1.20.3-r0 \
+    git=2.24.4-r0 \
     ca-certificates=20191127-r5
 
 RUN adduser -D -s /bin/sh -u 1100 runner && sed -i -r 's/^runner:!:/runner:x:/' /etc/shadow

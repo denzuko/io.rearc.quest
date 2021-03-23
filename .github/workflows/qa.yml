@@ -1,0 +1,37 @@
+---
+name: Code Quality Assurance Checks
+on:
+    push:
+    pull_request:
+
+jobs:
+    lint:
+        - uses: actions/checkout@v1
+        
+        - uses: JasonEtco/create-an-issue@v2
+          env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Validate YAML files
+          uses: ibiqlik/action-yamllint@v3
+
+        - name: Validate Dockerfile
+          uses: brpaz/hadolint-action@v1.2.1
+          with:
+            dockerfile: Dockerfile
+
+        - name: Setup Terraform
+          uses: hashicorp/setup-terraform@v1
+          with:
+            terraform_version: 0.14.8
+            cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+        - name: Terraform lint checker
+          uses: terraform-linters/setup-tflint@v1
+          with:
+            tflint_version: latest
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Verify Terraform Format adheres to canonical format
+          run: terraform fmt -check
+...

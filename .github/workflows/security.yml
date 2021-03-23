@@ -53,7 +53,7 @@ jobs:
           invoke terraform.plan
           invoke terraform.show
 
-      - name: Run driftctl
+      - name: Report on config drift
         uses: cloudskiff/driftctl-action@v1
         with:
           version: latest

@@ -46,9 +46,9 @@ locals {
 
   logConfiguration_default = {
     logDriver = var.log_driver
-    options   = {
-        awslogs_region: var.region,
-        awslogs_group: aws_cloudwatch_log_group.rearc_quest.name
+    options = {
+      awslogs-region : var.region,
+      awslogs-group : aws_cloudwatch_log_group.rearc_quest.name
     }
   }
 
@@ -100,11 +100,6 @@ data "template_file" "container_definition" {
     interactive            = var.interactive ? true : false
     links                  = local.links == "[]" ? "null" : local.links
     linuxParameters        = local.linuxParameters == "{}" ? "null" : local.linuxParameters
-    logConfiguration       = local.logConfiguration == "{}" ? "null" : local.logConfiguration
-    memory                 = var.container_memory == 0 ? "null" : var.container_memory
-    memoryReservation      = var.container_memoryReservation == 0 ? "null" : var.container_memoryReservation
-    mountPoints            = local.mountPoints == "[]" ? "null" : local.mountPoints
-    name                   = var.container_name == "" ? "null" : var.container_name
     portMappings           = local.portMappings == "[]" ? "null" : local.portMappings
     privileged             = var.privileged ? true : false
     pseudoTerminal         = var.pseudoTerminal ? true : false

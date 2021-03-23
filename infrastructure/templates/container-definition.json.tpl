@@ -11,7 +11,6 @@
   "essential": ${essential},
   "extraHosts": ${extraHosts},
   "healthCheck": ${healthCheck},
-  "hostname": "${hostname}",
   "image": "${image}",
   "interactive": ${interactive},
   "links": ${links},

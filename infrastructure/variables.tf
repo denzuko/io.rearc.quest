@@ -280,12 +280,6 @@ variable "healthCheck" {
   type        = map(string)
 }
 
-variable "hostname" {
-  default     = ""
-  description = "The hostname to use for your container"
-}
-
-
 variable "interactive" {
   default     = false
   description = "When this parameter is true, this allows you to deploy containerized applications that require stdin or a tty to be allocated"

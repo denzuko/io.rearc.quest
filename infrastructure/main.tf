@@ -94,7 +94,6 @@ data "template_file" "container_definition" {
     essential              = var.essential ? true : false
     extraHosts             = local.extraHosts == "[]" ? "null" : local.extraHosts
     healthCheck            = local.healthCheck == "{}" ? "null" : local.healthCheck
-    hostname               = var.hostname == "" ? "null" : var.hostname
     image                  = var.image == "" ? "null" : var.image
     interactive            = var.interactive ? true : false
     links                  = local.links == "[]" ? "null" : local.links
